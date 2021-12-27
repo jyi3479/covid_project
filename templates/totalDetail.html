@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="ko">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
+    <title>코로나19 전체 현황</title>
+    <!-- JQuery를 import 합니다 -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300&display=swap" rel="stylesheet">
+
+    <style type="text/css">
+        * {
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size : 30px;
+        }
+
+        .titles{
+            font-size: 60px;
+            text-align: center;
+
+        }
+
+        div.question-box {
+            margin: 10px 0 20px 0;
+        }
+
+        table {
+            border: 1px solid;
+            border-collapse: collapse;
+        }
+
+        td,
+        th {
+            padding: 10px;
+            border: 1px solid;
+        }
+
+        }
+
+
+    </style>
+
+    <script>
+        $(document).ready(function () {
+            listing();
+        });
+
+
+        function updateCovid() {
+            let date = $('#today-update').val();
+
+            $.ajax({
+                type: 'POST',
+                url: '/api/update',
+                data: {date_give: date},
+                success: function (response) {
+                    alert("업데이트 날짜 : "+response['date'])
+                    window.location.reload()
+
+                }
+            });
+        }
+        function listing() {
+            $.ajax({
+                type: "GET",
+                url: "/api/totalDetail",
+                data: {},
+                success: function (response) {
+                    $('#names-q1').empty()
+                    let covids = response['total_detail']
+                    for (i = 0; i < covids.length; i++) {
+                        let gubun = covids[i]['gubun']
+                        let incDec = covids[i]['incDec']
+                        let localOccCnt = covids[i]['localOccCnt']
+                        let overFlowCnt = covids[i]['overFlowCnt']
+                        let defCnt = covids[i]['defCnt']
+                        let isolClearCnt = covids[i]['isolClearCnt']
+                        let deathCnt = covids[i]['deathCnt']
+
+                        let temp_html = ` <tr>
+                                            <th scope="row">${gubun}</th>
+                                            <td class="number" headers="status_level l_type1">${incDec}</td>
+                                            <td class="number" headers="status_level l_type2">${localOccCnt}</td>
+                                            <td class="number" headers="status_level l_type3">${overFlowCnt}</td>
+                                            <td class="number" headers="status_con s_type1">${defCnt}</td>
+                                            <td class="number" headers="status_con s_type3">${isolClearCnt}</td>
+                                            <td class="number" headers="status_con s_type4">${deathCnt}</td>
+                                        </tr>`
+                        $('#names-q1').append(temp_html)
+                    }
+
+                }
+            })
+
+        }
+    </script>
+
+</head>
+
+<body>
+<p class="titles">코로나19 전체 현황</p>
+<hr/>
+
+<div class="question-box">
+    <h2></h2>
+    <p></p>
+    <p></p>
+    <div class="input-group mb-3 date-update">
+        <input id="today-update" type="text" placeholder="EX:20210305" aria-label="EX:20210305"
+               aria-describedby="basic-addon2">
+        <div >
+            <button onclick="updateCovid()" class="btn btn-outline-secondary" type="button">UPDATE</button>
+        </div>
+    </div>
+    <table class="table table-bordered text-center">
+        <thead class="table-primary">
+        <tr>
+            <th scope="col" rowspan="2">시도명</th>
+            <th scope="col" id="status_level" colspan="3">전일대비<br>확진환자 증감</th>
+            <th scope="col" id="status_con" colspan="4">확진환자 (명)</th>
+        </tr>
+        <tr>
+            <th scope="col" id="l_type1">합계</th>
+            <th scope="col" id="l_type2">국내<br>발생</th>
+            <th scope="col" id="l_type3">해외<br>유입</th>
+            <th scope="col" id="s_type1">확진<br>환자</th>
+            <th scope="col" id="s_type3">격리<br>해제</th>
+            <th scope="col" id="s_type4">사망자</th>
+        </tr>
+        </thead>
+        <tbody id="names-q1">
+
+
+        </tbody>
+    </table>
+</div>
+</body>
+
+</html>
