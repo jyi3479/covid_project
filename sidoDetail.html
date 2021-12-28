@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
+
+    <title>detail</title>
+    <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.5.1/dist/chart.min.js"></script>
+
+</head>
+<style>
+
+    .blue {
+        color: blue;
+    }
+
+    .grey {
+        color: grey;
+    }
+</style>
+<body>
+<div>
+    <h1>시도별 발생동향</h1>
+    <hr>
+</div>
+
+<div class="container">
+    <h4>경기</h4>
+    <hr>
+    <div class="row">
+        <div class="col-md-6">
+            <canvas id="barChart"></canvas>
+        </div>
+        <div class="col-md-6">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th scope="col"></th>
+                    <th scope="col"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>확진 누적</td>
+                    <td>14,867명</td>
+                </tr>
+                <tr>
+                    <td class="blue">전일 대비 증감</td>
+                    <td class="blue">(+130)</td>
+                </tr>
+                <tr>
+                    <td>격리해제 누적</td>
+                    <td>12,718명</td>
+                </tr>
+                <tr>
+                    <td>사망누적</td>
+                    <td>5,245명</td>
+                </tr>
+                <tr>
+                    <td class="grey">10만명당 발생률</td>
+                    <td class="grey">563명</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <script>
+            let myCharOne = document.getElementById('barChart').getContext('2d')
+
+            barChart = new Chart(myCharOne, {
+                type: 'doughnut',
+                data: {
+                    labels: ['전국대비  확진자 비율', ''],
+                    datasets: [{
+                        label: '바이랩 매출',
+                        data: [
+                            50,
+                            50
+                        ],
+                        backgroundColor: [
+                            '#3e95cd',
+                            'grey'
+                        ],
+
+                    }]
+                }
+            })
+        </script>
+    </div>
+</div>
+
+</body>
+</html>
+
