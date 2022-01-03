@@ -14,6 +14,11 @@ def home():
     return render_template('totalDetail.html')
 
 
+@app.route('/sidoDetail')
+def home_a():
+    return render_template('sidoDetail.html')
+
+
 @app.route('/api/update', methods=['POST'])
 def update_covid():
     date_receive = request.form['date_give']
@@ -47,7 +52,7 @@ def update_covid():
         db.covids.insert_one(doc)
 
 
-    return jsonify({'date': date_receive})
+    return jsonify({'currentDate': date_receive})
 
 
 @app.route('/api/totalDetail', methods=['GET'])

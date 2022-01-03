@@ -34,6 +34,110 @@
         color: grey;
     }
 </style>
+<script>
+    $(document).ready(function () {
+        listing();
+        updateCovid();
+    });
+
+
+    function updateCovid() {
+        //현재 날짜 도출
+        var date = new Date();
+        var year = date.getFullYear().toString();
+
+        var month = date.getMonth() + 1;
+        month = month < 10 ? '0' + month.toString() : month.toString();
+
+        var day = date.getDate();
+
+        var hours = date.getHours();
+
+        let currentDate;
+
+        if (hours >= 11) {
+            day = day < 10 ? '0' + day.toString() : day.toString();
+            currentDate = year + month + day;
+        } else {
+            day = day - 1;
+            day = day < 10 ? '0' + day.toString() : day.toString();
+            currentDate = year + month + day;
+        }
+
+
+        //날짜 입력
+        $.ajax({
+            type: 'POST',
+            url: '/api/update',
+            data: {date_give: currentDate},
+            success: function (response) {
+                $('#current-date').text("업데이트 날짜 : " + response['currentDate']);
+
+            }
+        });
+    }
+
+    function listing() {
+        $.ajax({
+            type: "GET",
+            url: "/api/totalDetail",
+            data: {},
+            success: function (response) {
+                $('#names-q1').empty()
+                let covids = response['total_detail']
+                for (i = 0; i < covids.length; i++) {
+                    let gubun = covids[i]['gubun']
+                    let incDec = covids[i]['incDec']
+                    let localOccCnt = covids[i]['localOccCnt']
+                    let overFlowCnt = covids[i]['overFlowCnt']
+                    let defCnt = covids[i]['defCnt']
+                    let isolClearCnt = covids[i]['isolClearCnt']
+                    let deathCnt = covids[i]['deathCnt']
+
+                    if(gubun=="경기") {
+                        $('#gubun').text(gubun)
+                        $('#incDec').text(incDec)
+                        $('#defCnt').text(defCnt)
+                        $('#deathCnt').text(deathCnt)
+                        $('#isolClearCnt').text(isolClearCnt)
+
+                    }
+                }
+                $('#totalCnt').text(covids[18]['incDec'])
+
+
+            //그래프 그리기
+            let myCharOne = document.getElementById('barChart').getContext('2d')
+            let incDec_num, totalCnt_num, incDec_ratio, totalCnt_ratio;
+            incDec_num = Number($('#incDec').text())
+            totalCnt_num = Number($('#totalCnt').text())
+            incDec_ratio = Math.round([incDec_num/(incDec_num+totalCnt_num)]*100)
+            totalCnt_ratio = 100-incDec_ratio
+
+
+            barChart = new Chart(myCharOne, {
+                type: 'doughnut',
+                data: {
+                    labels: ['전국대비  확진자 비율', ''],
+                    datasets: [{
+                        label: '바이랩 매출',
+                        data: [
+                            incDec_ratio,
+                            totalCnt_ratio
+                        ],
+                        backgroundColor: [
+                            '#3e95cd',
+                            'grey'
+                        ],
+
+                    }]
+                }
+            })
+            }
+        })
+
+    }
+</script>
 <body>
 <div>
     <h1>시도별 발생동향</h1>
@@ -41,7 +145,7 @@
 </div>
 
 <div class="container">
-    <h4>경기</h4>
+    <h4 id="gubun">경기</h4>
     <hr>
     <div class="row">
         <div class="col-md-6">
@@ -57,49 +161,30 @@
                 </thead>
                 <tbody>
                 <tr>
-                    <td>확진 누적</td>
-                    <td>14,867명</td>
+                    <td>확진</td>
+                    <td id="defCnt">14,867명</td>
                 </tr>
                 <tr>
                     <td class="blue">전일 대비 증감</td>
-                    <td class="blue">(+130)</td>
+                    <td class="blue" id="incDec">(+130)</td>
                 </tr>
                 <tr>
-                    <td>격리해제 누적</td>
-                    <td>12,718명</td>
+                    <td>격리해제</td>
+                    <td id="isolClearCnt">12,718명</td>
                 </tr>
                 <tr>
-                    <td>사망누적</td>
-                    <td>5,245명</td>
+                    <td>사망</td>
+                    <td id="deathCnt">5,245명</td>
                 </tr>
                 <tr>
-                    <td class="grey">10만명당 발생률</td>
-                    <td class="grey">563명</td>
+                    <td class="grey">전국</td>
+                    <td class="grey" id="totalCnt">563명</td>
                 </tr>
                 </tbody>
             </table>
         </div>
         <script>
-            let myCharOne = document.getElementById('barChart').getContext('2d')
 
-            barChart = new Chart(myCharOne, {
-                type: 'doughnut',
-                data: {
-                    labels: ['전국대비  확진자 비율', ''],
-                    datasets: [{
-                        label: '바이랩 매출',
-                        data: [
-                            50,
-                            50
-                        ],
-                        backgroundColor: [
-                            '#3e95cd',
-                            'grey'
-                        ],
-
-                    }]
-                }
-            })
         </script>
     </div>
 </div>

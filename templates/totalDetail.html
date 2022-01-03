@@ -57,19 +57,42 @@
     <script>
         $(document).ready(function () {
             listing();
+            updateCovid();
         });
 
 
         function updateCovid() {
-            let date = $('#today-update').val();
+            //현재 날짜 도출
+            var date = new Date();
+            var year = date.getFullYear().toString();
 
+            var month = date.getMonth() + 1;
+            month = month < 10 ? '0' + month.toString() : month.toString();
+
+            var day = date.getDate();
+
+            var hours = date.getHours();
+
+            // 코로나 확진자 발표 시간(11시) 기준 적용
+            let currentDate;
+
+            if (hours >= 11) {
+                day = day < 10 ? '0' + day.toString() : day.toString();
+                currentDate = year + month + day;
+            } else {
+                day = day - 1;
+                day = day < 10 ? '0' + day.toString() : day.toString();
+                currentDate = year + month + day;
+            }
+
+
+            //날짜 입력
             $.ajax({
                 type: 'POST',
                 url: '/api/update',
-                data: {date_give: date},
+                data: {date_give: currentDate},
                 success: function (response) {
-                    alert("업데이트 날짜 : "+response['date'])
-                    window.location.reload()
+                    $('#current-date').text("업데이트 날짜 : "+response['currentDate']);
 
                 }
             });
@@ -119,13 +142,10 @@
     <h2></h2>
     <p></p>
     <p></p>
-    <div class="input-group mb-3 date-update">
-        <input id="today-update" type="text" placeholder="EX:20210305" aria-label="EX:20210305"
-               aria-describedby="basic-addon2">
-        <div >
-            <button onclick="updateCovid()" class="btn btn-outline-secondary" type="button">UPDATE</button>
+        <div>
+            <span id="current-date" style="font-weight: bold"></span>
         </div>
-    </div>
+
     <table class="table table-bordered text-center">
         <thead class="table-primary">
         <tr>
